@@ -48,6 +48,40 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Get users who bought a specific product
+router.get('/product/:productId/users', async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    const orders = await Order.findAll({
+      where: { productId },
+      attributes: ['userId'], 
+    });
+
+    // Extract unique userIds
+    const userIds = [...new Set(orders.map(order => order.userId))];
+
+    if (userIds.length === 0) {
+      return res.status(200).json([]); // No users found
+    }
+
+    // Fetch user details using the unique userIds
+    const users = await User.findAll({
+      where: {
+        id: {
+          [Op.in]: userIds,
+        },
+      },
+      attributes: ['name', 'email', 'phone'],
+    });
+
+    res.status(200).json(users);
+  } catch (err: any) {
+    console.error("Error fetching users who bought the product:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 //Update order
 router.put("/:id", async (req, res) => {
   try {
