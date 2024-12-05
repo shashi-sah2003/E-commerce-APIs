@@ -95,10 +95,27 @@
         <button type="submit">Get Order</button>
       </form>
       <div id="getOrderOutput"></div>
+
+      <form id="getUserOrdersForm">
+        <h3>Get Orders of a Specific User</h3>
+        <input type="number" id="getUserId" placeholder="User ID" required>
+        <button type="submit">Get Orders</button>
+      </form>
+      <div id="getUserOrdersOutput"></div>
+
+      <form id="getProductUsersForm">
+        <h3>Get Users Who Bought Product</h3>
+        <input type="number" id="getProductUsersId" placeholder="Product ID" required>
+        <button type="submit">Get Users</button>
+      </form>
+      <div id="productUsersOutput"></div>
+
+      <button id="getRecentOrders">Get Recent Orders</button>
+        <div id="recentOrdersOutput"></div>
+
     </section>
 
     <section>
-      <h2>Query API</h2>
       <button id="getTotalStock">Get Total Stock</button>
       <div id="queryOutput"></div>
     </section>

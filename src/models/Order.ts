@@ -4,8 +4,10 @@ import User from "./User";
 import Product from "./Product";
 
 class Order extends Model {
-  public id!: number;
-
+    public id!: number;
+    public quantity!: number;
+    public userId!: number;
+    public productId!: number;
 }
 Order.init(
   {

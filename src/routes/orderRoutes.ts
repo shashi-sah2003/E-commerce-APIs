@@ -45,27 +45,29 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-//Order for specific user
-router.get("/user/:userId", async (req, res) => {
+
+// Get orders of a specific user
+router.get("/:userId/orders", async (req, res) => {
   try {
-    const orders = await Order.findAll({ where: { userId: req.params.userId }, include: [Product] });
-    res.status(200).json(orders);
+    const { userId } = req.params;
+
+    // Fetch the orders of the user
+    const userWithOrders = await User.findByPk(userId, {
+      include: {
+        model: Order,
+        include: [Product], // Include associated Product details
+      },
+    });
+
+    if (!userWithOrders) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(userWithOrders);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 });
 
-
-//Users who bought a specific product
-router.get("/product/:productId/users", async (req, res) => {
-  try {
-    const orders = await Order.findAll({ where: { productId: req.params.productId }, include: [User] });
-    //const users = orders.map(order => order.userId);
-    const users = 2
-    res.status(200).json(users);
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 export default router;

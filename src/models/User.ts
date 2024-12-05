@@ -1,7 +1,9 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../db";
 
-class User extends Model {}
+class User extends Model {
+  public name!: string;
+}
 User.init(
   {
     name: { type: DataTypes.STRING, allowNull: false },

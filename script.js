@@ -2,7 +2,16 @@ const apiBase = "http://localhost:3000"; // Replace with your API base URL
 
 // Helper to show output
 const showOutput = (selector, data) => {
-  document.getElementById(selector).innerText = JSON.stringify(data, null, 2);
+  const outputElement = document.getElementById(selector);
+  if (outputElement) {
+    if (typeof data === 'string') {
+      outputElement.innerText = data;
+    } else {
+      outputElement.innerText = JSON.stringify(data, null, 2);
+    }
+  } else {
+    console.error(`Element with selector "${selector}" not found.`);
+  }
 };
 
 // Create User
@@ -229,16 +238,92 @@ document.getElementById("getOrderForm").addEventListener("submit", async (e) => 
 });
 
 
-// // Get Recent Orders
-// document.getElementById("getRecentOrders").addEventListener("click", async () => {
-//   const response = await fetch(`${apiBase}/orders/recent`);
-//   const data = await response.json();
-//   showOutput("orderOutput", data);
-// });
+// Get Recent Orders
+document.getElementById("getRecentOrders").addEventListener("click", async () => {
+  try {
+    const response = await fetch(`${apiBase}/orders/recent`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-// // Get Total Stock
-// document.getElementById("getTotalStock").addEventListener("click", async () => {
-//   const response = await fetch(`${apiBase}/products/total-stock`);
-//   const data = await response.json();
-//   showOutput("queryOutput", data);
-// });
+    const data = await response.json();
+    console.log("Response Data:", data); // Log the response data
+
+    const formattedData = data.map(order => {
+      return `Product: ${order.product.name}, User: ${order.user.email}, Quantity: ${order.quantity}, Order Date: ${new Date(order.orderDate).toLocaleString()}`;
+    }).join("\n");
+
+    showOutput("recentOrdersOutput", formattedData);
+  } catch (error) {
+    //console.error("Error:", error); // Log any errors
+    showOutput("recentOrdersOutput", `Error: ${error.message}`);
+  }
+});
+
+
+// Get Orders of a Specific User
+document.getElementById("getUserOrdersForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const userId = document.getElementById("getUserId").value;
+
+  try {
+    const response = await fetch(`${apiBase}/orders/${userId}/orders`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Response Data:", data); // Log the response data
+
+    const formattedData = data.orders.map(order => {
+      return `Product: ${order.product.name}, Quantity: ${order.quantity}, Order Date: ${new Date(order.orderDate).toLocaleString()}`;
+    }).join("\n");
+
+    showOutput("getUserOrdersOutput", formattedData);
+  } catch (error) {
+    console.error("Error:", error); // Log any errors
+    showOutput("getUserOrdersOutput", `Error: ${error.message}`);
+  }
+});
+
+// Get Users Who Bought Product
+document.getElementById("getProductUsersForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const productId = document.getElementById("getProductUsersId").value;
+
+  try {
+    const response = await fetch(`${apiBase}/orders/product/${productId}/users`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Response Data:", data);
+
+    const formattedData = data.map(user => 
+      `Name: ${user.name}, Email: ${user.email}, Phone: ${user.phone}`
+    ).join("\n");
+
+    showOutput("productUsersOutput", formattedData || "No users found");
+  } catch (error) {
+    console.error("Error:", error);
+    showOutput("productUsersOutput", `Error: ${error.message}`);
+  }
+});
+
+// Get Total Stock
+document.getElementById("getTotalStock").addEventListener("click", async () => {
+  try {
+    const response = await fetch(`${apiBase}/products/total-stock`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Total Stock:", data.totalStock);
+    showOutput("queryOutput", `Total Stock of All Products: ${data.totalStock}`);
+  } catch (error) {
+    console.error("Error:", error);
+    showOutput("queryOutput", `Error: ${error.message}`);
+  }
+});

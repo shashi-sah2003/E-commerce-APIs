@@ -3,6 +3,17 @@ import Product from "../models/Product";
 
 const router = express.Router();
 
+// Get total stock quantity for all products combined
+router.get("/total-stock", async (req, res) => {
+  try {
+    const totalStock = await Product.sum("stock");
+    res.status(200).json({ totalStock });
+  } catch (err: any) {
+    console.error("Error fetching total stock:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 //Create Product
 router.post("/", async (req, res) => {
   try {
@@ -42,15 +53,5 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-//get total stock quantity for all products combined
-router.get("/total-stock", async (req, res) => {
-  try {
-    const products = await Product.findAll();
-    const totalStock = products.reduce((sum, product) => sum + product.stock, 0);
-    res.status(200).json({ totalStock });
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 export default router;
