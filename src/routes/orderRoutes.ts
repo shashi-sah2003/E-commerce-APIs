@@ -9,6 +9,7 @@ import User from "../models/User";
 const router = express.Router();
 
 //  Get orders placed in the last 7 days
+// Transaction to ensure atomicity
 router.get("/recent", async (req, res) => {
   try {
     const sevenDaysAgo = new Date();
@@ -54,17 +55,14 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ error: "Product not found" });
     }
 
-    // Check if there is enough stock
     if (product.stock < quantity) {
       await transaction.rollback();
       return res.status(400).json({ error: "Insufficient stock" });
     }
 
-    // Update the product stock
     product.stock -= quantity;
     await product.save({ transaction });
 
-    // Create the order
     const order = await Order.create(
       { userId, productId, quantity, orderDate: new Date() },
       { transaction }
@@ -89,11 +87,10 @@ router.get('/product/:productId/users', async (req, res) => {
       attributes: ['userId'], 
     });
 
-    // Extract unique userIds
     const userIds = [...new Set(orders.map(order => order.userId))];
 
     if (userIds.length === 0) {
-      return res.status(200).json([]); // No users found
+      return res.status(200).json([]);
     }
 
     // Fetch user details using the unique userIds
@@ -152,7 +149,7 @@ router.get("/:userId/orders", async (req, res) => {
     const userWithOrders = await User.findByPk(userId, {
       include: {
         model: Order,
-        include: [Product], // Include associated Product details
+        include: [Product],
       },
     });
 
