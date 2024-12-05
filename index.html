@@ -74,16 +74,20 @@
       <h2>Orders</h2>
       <form id="createOrderForm">
         <h3>Create Order</h3>
-        <input type="number" id="orderUserId" placeholder="User ID" required>
+        <input type="number" id="orderUserId" placeholder="User Id" required>
         <input type="number" id="orderProductId" placeholder="Product ID" required>
         <input type="number" id="orderQuantity" placeholder="Quantity" required>
         <button type="submit">Create Order</button>
       </form>
+      <div id="createOrderOutput"></div>
+      
       <form id="getOrderForm">
         <h3>Get Order</h3>
         <input type="number" id="getOrderId" placeholder="Order ID" required>
         <button type="submit">Get Order</button>
       </form>
+      <div id="getOrderOutput"></div>
+
       <form id="deleteOrderForm">
         <h3>Delete Order</h3>
         <input type="number" id="deleteOrderId" placeholder="Order ID" required>

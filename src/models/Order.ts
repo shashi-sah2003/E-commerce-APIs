@@ -3,7 +3,10 @@ import sequelize from "../db";
 import User from "./User";
 import Product from "./Product";
 
-class Order extends Model {}
+class Order extends Model {
+  public id!: number;
+
+}
 Order.init(
   {
     quantity: { type: DataTypes.INTEGER, allowNull: false },

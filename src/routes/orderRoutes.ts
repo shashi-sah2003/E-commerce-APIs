@@ -10,7 +10,7 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const order = await Order.create(req.body);
-    res.status(201).json(order);
+    res.status(201).json(order.id);
   } catch (err: any) {
     res.status(400).json({ error: err.message });
   }

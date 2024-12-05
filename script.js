@@ -97,7 +97,7 @@ document.getElementById("createProductForm").addEventListener("submit", async (e
 
     const data = await response.json();
     console.log("Response Data:", data); // Log the response data
-    showOutput("createProductOutput", `Product created successfully with ID: ${data.productId}`);
+    showOutput("createProductOutput", `Product created successfully with ID: ${data.productId}, please remember the product ID`);
   } catch (error) {
     console.error("Error:", error); // Log any errors
     showOutput("createProductOutput", `Error: ${error.message}`);
@@ -157,17 +157,28 @@ document.getElementById("getProductForm").addEventListener("submit", async (e) =
 // Create Order
 document.getElementById("createOrderForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const userId = +document.getElementById("orderUserId").value;
+  const userId = document.getElementById("orderUserId").value;
   const productId = +document.getElementById("orderProductId").value;
   const quantity = +document.getElementById("orderQuantity").value;
 
-  const response = await fetch(`${apiBase}/orders`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, productId, quantity }),
-  });
-  const data = await response.json();
-  showOutput("orderOutput", data);
+  try {
+    const response = await fetch(`${apiBase}/orders`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, productId, quantity }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Response Data:", data); 
+    showOutput("createOrderOutput", `Order created successfully with ID: ${data}`);
+  } catch (error) {
+    console.error("Error:", error); // Log any errors
+    showOutput("createOrderOutput", `Error: ${error.message}`);
+  }
 });
 
 // Get Order
