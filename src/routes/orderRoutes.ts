@@ -31,6 +31,20 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Get Order Details
+router.get("/:id", async (req, res) => {
+  try {
+    const order = await Order.findByPk(req.params.id, { include: [User, Product] });
+    if (order) {
+      res.status(200).json(order);
+    } else {
+      res.status(404).json({ error: "Order not found" });
+    }
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 //Order for specific user
 router.get("/user/:userId", async (req, res) => {
   try {

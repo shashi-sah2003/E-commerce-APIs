@@ -181,27 +181,64 @@ document.getElementById("createOrderForm").addEventListener("submit", async (e) 
   }
 });
 
+// Update Order
+document.getElementById("updateOrderForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("updateOrderId").value;
+  const quantity = +document.getElementById("updateOrderQuantity").value;
+
+  try {
+    const response = await fetch(`${apiBase}/orders/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ quantity }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Response Data:", data); // Log the response data
+    showOutput("updateOrderOutput", `Order updated successfully: with ProductID: ${data.productId} New Quantity: ${data.quantity}`);
+  } catch (error) {
+    console.error("Error:", error); // Log any errors
+    showOutput("updateOrderOutput", `Error: ${error.message}`);
+  }
+});
+
 // Get Order
 document.getElementById("getOrderForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const id = document.getElementById("getOrderId").value;
 
-  const response = await fetch(`${apiBase}/orders/${id}`);
-  const data = await response.json();
-  showOutput("orderOutput", data);
+  try {
+    const response = await fetch(`${apiBase}/orders/${id}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Response Data:", data); // Log the response data
+    const { productId, userId, quantity } = data;
+    showOutput("getOrderOutput", `Product ID: ${productId}, User ID: ${userId}, Quantity: ${quantity}`);
+  } catch (error) {
+    console.error("Error:", error); // Log any errors
+    showOutput("getOrderOutput", `Error: ${error.message}`);
+  }
 });
 
 
-// Get Recent Orders
-document.getElementById("getRecentOrders").addEventListener("click", async () => {
-  const response = await fetch(`${apiBase}/orders/recent`);
-  const data = await response.json();
-  showOutput("orderOutput", data);
-});
+// // Get Recent Orders
+// document.getElementById("getRecentOrders").addEventListener("click", async () => {
+//   const response = await fetch(`${apiBase}/orders/recent`);
+//   const data = await response.json();
+//   showOutput("orderOutput", data);
+// });
 
-// Get Total Stock
-document.getElementById("getTotalStock").addEventListener("click", async () => {
-  const response = await fetch(`${apiBase}/products/total-stock`);
-  const data = await response.json();
-  showOutput("queryOutput", data);
-});
+// // Get Total Stock
+// document.getElementById("getTotalStock").addEventListener("click", async () => {
+//   const response = await fetch(`${apiBase}/products/total-stock`);
+//   const data = await response.json();
+//   showOutput("queryOutput", data);
+// });
