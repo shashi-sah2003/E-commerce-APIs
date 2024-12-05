@@ -14,6 +14,88 @@ const showOutput = (selector, data) => {
   }
 };
 
+// Function to create and display table
+const showTable = (selector, data) => {
+  const outputElement = document.getElementById(selector);
+  if (!outputElement) {
+    console.error(`Element with selector "${selector}" not found.`);
+    return;
+  }
+
+  // Clear any existing content
+  outputElement.innerHTML = "";
+
+  if (data.length === 0) {
+    outputElement.innerText = "No recent orders found.";
+    return;
+  }
+
+  // Create a table element
+  const table = document.createElement("table");
+  table.style.borderCollapse = "collapse";
+  table.style.width = "100%";
+
+  // Create table headers
+  const headers = ["Order ID", "User", "Product", "Quantity", "Order Date"];
+  const headerRow = document.createElement("tr");
+
+  headers.forEach((header) => {
+    const th = document.createElement("th");
+    th.innerText = header;
+    th.style.border = "1px solid #ddd";
+    th.style.padding = "8px";
+    th.style.textAlign = "left";
+    th.style.backgroundColor = "#f4f4f4";
+    headerRow.appendChild(th);
+  });
+
+  table.appendChild(headerRow);
+
+  // Populate table rows
+  data.forEach((order) => {
+    const row = document.createElement("tr");
+
+    const orderIdCell = document.createElement("td");
+    orderIdCell.innerText = order.id;
+    orderIdCell.style.border = "1px solid #ddd";
+    orderIdCell.style.padding = "8px";
+    row.appendChild(orderIdCell);
+
+    const userCell = document.createElement("td");
+    if (order.user) {
+      userCell.innerText = `${order.user.name}`;
+    } else {
+      userCell.innerText = "Guest";
+    }
+    userCell.style.border = "1px solid #ddd";
+    userCell.style.padding = "8px";
+    row.appendChild(userCell);
+
+    const productCell = document.createElement("td");
+    productCell.innerText = `${order.product.name} (${order.product.category})`;
+    productCell.style.border = "1px solid #ddd";
+    productCell.style.padding = "8px";
+    row.appendChild(productCell);
+
+    const quantityCell = document.createElement("td");
+    quantityCell.innerText = order.quantity;
+    quantityCell.style.border = "1px solid #ddd";
+    quantityCell.style.padding = "8px";
+    row.appendChild(quantityCell);
+
+    const dateCell = document.createElement("td");
+    dateCell.innerText = new Date(order.orderDate).toLocaleString();
+    dateCell.style.border = "1px solid #ddd";
+    dateCell.style.padding = "8px";
+    row.appendChild(dateCell);
+
+    table.appendChild(row);
+  });
+
+  // Append the table to the output element
+  outputElement.appendChild(table);
+};
+
 // Create User
 document.getElementById("createUserForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -247,15 +329,10 @@ document.getElementById("getRecentOrders").addEventListener("click", async () =>
     }
 
     const data = await response.json();
-    console.log("Response Data:", data); // Log the response data
+    console.log("Recent Orders:", data);
 
-    const formattedData = data.map(order => {
-      return `Product: ${order.product.name}, User: ${order.user.email}, Quantity: ${order.quantity}, Order Date: ${new Date(order.orderDate).toLocaleString()}`;
-    }).join("\n");
-
-    showOutput("recentOrdersOutput", formattedData);
+    showTable("recentOrdersOutput", data);
   } catch (error) {
-    //console.error("Error:", error); // Log any errors
     showOutput("recentOrdersOutput", `Error: ${error.message}`);
   }
 });

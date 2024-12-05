@@ -6,6 +6,38 @@ import User from "../models/User";
 
 const router = express.Router();
 
+//  Get orders placed in the last 7 days
+router.get("/recent", async (req, res) => {
+  try {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const recentOrders = await Order.findAll({
+      where: {
+        orderDate: {
+          [Op.gte]: sevenDaysAgo,
+        },
+      },
+      attributes: ['id', 'quantity', 'orderDate'],
+      include: [
+        {
+          model: User,
+          attributes: ['name'],
+        },
+        {
+          model: Product,
+          attributes: ['name', 'category', 'price'],
+        },
+      ],
+    });
+
+    res.status(200).json(recentOrders);
+  } catch (err: any) {
+    console.error("Error fetching recent orders:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 //Create Order
 router.post("/", async (req, res) => {
   try {
