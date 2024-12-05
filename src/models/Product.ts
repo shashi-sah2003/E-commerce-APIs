@@ -4,11 +4,9 @@ import sequelize from "../db";
 class Product extends Model {
 
   public id!: number;
-
   public name!: string;
-
   public price!: number;
-
+  public category!: string;
   public stock!: number; 
 
 }

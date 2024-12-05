@@ -46,7 +46,8 @@ router.get("/user/:userId", async (req, res) => {
 router.get("/product/:productId/users", async (req, res) => {
   try {
     const orders = await Order.findAll({ where: { productId: req.params.productId }, include: [User] });
-    const users = orders.map(order => order.userId);
+    //const users = orders.map(order => order.userId);
+    const users = 2
     res.status(200).json(users);
   } catch (err: any) {
     res.status(500).json({ error: err.message });

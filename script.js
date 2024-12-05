@@ -84,13 +84,24 @@ document.getElementById("createProductForm").addEventListener("submit", async (e
   const price = +document.getElementById("productPrice").value;
   const stock = +document.getElementById("productStock").value;
 
-  const response = await fetch(`${apiBase}/products`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, category, price, stock }),
-  });
-  const data = await response.json();
-  showOutput("productOutput", data);
+  try {
+    const response = await fetch(`${apiBase}/products`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, category, price, stock }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Response Data:", data); // Log the response data
+    showOutput("createProductOutput", `Product created successfully with ID: ${data.productId}`);
+  } catch (error) {
+    console.error("Error:", error); // Log any errors
+    showOutput("createProductOutput", `Error: ${error.message}`);
+  }
 });
 
 // Update Product
@@ -102,13 +113,24 @@ document.getElementById("updateProductForm").addEventListener("submit", async (e
   const price = +document.getElementById("updateProductPrice").value;
   const stock = +document.getElementById("updateProductStock").value;
 
-  const response = await fetch(`${apiBase}/products/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, category, price, stock }),
-  });
-  const data = await response.json();
-  showOutput("productOutput", data);
+  try {
+    const response = await fetch(`${apiBase}/products/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, category, price, stock }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Response Data:", data); // Log the response data
+    showOutput("updateProductOutput", `Product Updated successfully Name: ${data.name} Category: ${data.category} Price: ${data.price} Stock: ${data.stock}`);
+  } catch (error) {
+    //console.error("Error:", error); // Log any errors
+    showOutput("updateProductOutput", `Error: ${error.message}`);
+  }
 });
 
 // Get Product
@@ -116,22 +138,21 @@ document.getElementById("getProductForm").addEventListener("submit", async (e) =
   e.preventDefault();
   const id = document.getElementById("getProductId").value;
 
-  const response = await fetch(`${apiBase}/products/${id}`);
-  const data = await response.json();
-  showOutput("productOutput", data);
+  try {
+    const response = await fetch(`${apiBase}/products/${id}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Response Data:", data); // Log the response data
+    showOutput("getProductOutput", `Name: ${data.name} Category: ${data.category} Price: ${data.price} Stock: ${data.stock}`);
+  } catch (error) {
+    console.error("Error:", error); // Log any errors
+    showOutput("getProductOutput", `Error: ${error.message}`);
+  }
 });
 
-// Delete Product
-document.getElementById("deleteProductForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const id = document.getElementById("deleteProductId").value;
-
-  const response = await fetch(`${apiBase}/products/${id}`, {
-    method: "DELETE",
-  });
-  const data = await response.json();
-  showOutput("productOutput", data);
-});
 
 // Create Order
 document.getElementById("createOrderForm").addEventListener("submit", async (e) => {
@@ -159,17 +180,6 @@ document.getElementById("getOrderForm").addEventListener("submit", async (e) => 
   showOutput("orderOutput", data);
 });
 
-// Delete Order
-document.getElementById("deleteOrderForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const id = document.getElementById("deleteOrderId").value;
-
-  const response = await fetch(`${apiBase}/orders/${id}`, {
-    method: "DELETE",
-  });
-  const data = await response.json();
-  showOutput("orderOutput", data);
-});
 
 // Get Recent Orders
 document.getElementById("getRecentOrders").addEventListener("click", async () => {
