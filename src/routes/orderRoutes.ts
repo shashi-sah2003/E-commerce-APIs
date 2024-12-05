@@ -1,5 +1,7 @@
 import express from "express";
 import Order from "../models/Order";
+import { Sequelize } from "sequelize";
+import sequelize from "../db";
 import { Op } from "sequelize";
 import Product from "../models/Product";
 import User from "../models/User";
@@ -40,11 +42,40 @@ router.get("/recent", async (req, res) => {
 
 //Create Order
 router.post("/", async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
-    const order = await Order.create(req.body);
+    const { userId, productId, quantity } = req.body;
+
+    // Fetch the product
+    const product = await Product.findByPk(productId, { transaction });
+
+    if (!product) {
+      await transaction.rollback();
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Check if there is enough stock
+    if (product.stock < quantity) {
+      await transaction.rollback();
+      return res.status(400).json({ error: "Insufficient stock" });
+    }
+
+    // Update the product stock
+    product.stock -= quantity;
+    await product.save({ transaction });
+
+    // Create the order
+    const order = await Order.create(
+      { userId, productId, quantity, orderDate: new Date() },
+      { transaction }
+    );
+
+    await transaction.commit();
     res.status(201).json(order.id);
   } catch (err: any) {
-    res.status(400).json({ error: err.message });
+    await transaction.rollback();
+    console.error("Error creating order:", err);
+    res.status(500).json({ error: err.message });
   }
 });
 
