@@ -1,16 +1,3 @@
-### Project Overview
-
-ecommerce-api/
-├── src/
-│   ├── models/        # Database models
-│   ├── routes/        # API routes
-│   ├── db.ts          # Database configuration
-│   └── index.ts       # Application entry point
-├── index.html         # Frontend interface
-├── script..js
-├── style.css
-├── package.json
-└── tsconfig.json
 
 ### Installation
 
@@ -34,23 +21,23 @@ npm start
 ### API Endpoints
 
 ## Users
-POST /users - Create user
-PUT /users/:emailId - Update user
-GET /users/:email - Get user
+- POST /users - Create user
+- PUT /users/:emailId - Update user
+- GET /users/:email - Get user
 
 ## Products
-POST /products - Create product
-PUT /products/:id - Update product
-GET /products/:id - Get product
-GET /products/total-stock - Get total stock
+- POST /products - Create product
+- PUT /products/:id - Update product
+- GET /products/:id - Get product
+- GET /products/total-stock - Get total stock
 
 ## Orders
-POST /orders - Create order
-PUT /orders/:id - Update order
-GET /orders/:id - Get order details
-GET /orders/recent - Get recent orders
-GET /orders/:userId/orders - Get user's orders
-GET /orders/product/:productId/users - Get product buyers
+- POST /orders - Create order
+- PUT /orders/:id - Update order
+- GET /orders/:id - Get order details
+- GET /orders/recent - Get recent orders
+- GET /orders/:userId/orders - Get user's orders
+- GET /orders/product/:productId/users - Get product buyers
 
 ### Testing the API
 
